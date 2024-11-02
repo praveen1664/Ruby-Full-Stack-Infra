@@ -1,4 +1,4 @@
-# Fullstaq Ruby infrastructure
+# Fullstack Ruby infrastructure
 
 This repository describes and codifies the infrastructure used by the Fullstaq Ruby project.
 
