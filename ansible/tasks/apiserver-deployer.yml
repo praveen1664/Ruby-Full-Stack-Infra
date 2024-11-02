@@ -1,0 +1,55 @@
+- name: Create apiserver-deployer group
+  group:
+    name: apiserver-deployer
+    gid: 954
+
+- name: Create apiserver-deployer user
+  user:
+    name: apiserver-deployer
+    group: apiserver-deployer
+    uid: 954
+
+- name: Install apt-satisfy-dependency-string.sh
+  copy:
+    src: apt-satisfy-dependency-string.sh
+    dest: /usr/local/bin/apt-satisfy-dependency-string.sh
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Install apiserver-deployer sudoers entry
+  copy:
+    src: apiserver-deployer-sudoers
+    dest: /etc/sudoers.d/apiserver-deployer
+    owner: root
+    group: root
+    mode: 0440
+
+- name: Create apiserver deployment directory
+  file:
+    path: /opt/apiserver/versions
+    state: directory
+    recurse: true
+    owner: apiserver-deployer
+    group: apiserver-deployer
+    mode: 0755
+
+- name: Install apiserver-deployer
+  copy:
+    src: apiserver-deployer.sh
+    dest: /usr/local/bin/apiserver-deployer
+    owner: root
+    group: root
+    mode: 0755
+  notify: Restart apiserver-deployer
+
+- name: Install apiserver-deployer systemd unit
+  copy:
+    src: apiserver-deployer.service
+    dest: /etc/systemd/system/apiserver-deployer.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Reload systemd
+    - Restart apiserver-deployer
